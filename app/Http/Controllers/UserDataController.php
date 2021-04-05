@@ -60,43 +60,41 @@ class UserDataController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\UserData  $userData
-     * @return \Illuminate\Http\Response
-     */
-    public function show(UserData $userData)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\UserData  $userData
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, UserData $userData)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\UserData  $userData
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserData $userData)
+    public function destroy($id)
     {
-        //
+        // Si l'id est invalide
+        if( empty($id) || ! is_numeric($id) || $id < 0 ) {
+            return $this->returnError( $this->errorMessage("invalid_id") );
+        }
+        else {
+            $one = UserData::where('id', $id)->first();
+            if( ! $one ) {
+                return $this->returnError( $this->errorMessage("not_found_one") );
+            }
+            else {
+                try {
+                    $one->delete();
+                    return $this->returnSuccess( $this->errorMessage("delete_success") );
+                }
+                catch( \RuntimeException $e ) {
+                    return $this->returnError( $e->getMessage() );
+                }
+            }
+        }
     }
 
     private function errorMessage( string $key , array $data = [] ) : string
     {
         switch( $key ) {
             case "create_success" : return "L'utilisateur a bien été ajouté";
+            case "invalid_id"     : return "L'id saisie est invalide";
+            case "not_found_one"  : return "L'utilisateur demandé n'a pas été trouvé";
+            case "delete_success" : return "L'utilisateur a bien été supprimé";
             case "empty_field"    : return "Champ {$data['field']} invalide";
             default               : return "";
         }
@@ -112,7 +110,7 @@ class UserDataController extends Controller
     }
 
 
-    private function returnError( string $msg , ?string $fieldName , ?int $httpCode = 500 )
+    private function returnError( string $msg , ?string $fieldName = NULL , ?int $httpCode = 500 )
     {
         $data = [
             'status'  => "error",
