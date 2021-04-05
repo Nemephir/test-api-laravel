@@ -65,28 +65,28 @@ class UserDataController extends Controller
      * @param  \App\Models\UserData  $userData
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        // Si l'id est invalide
-        if( empty($id) || ! is_numeric($id) || $id < 0 ) {
-            return $this->returnError( $this->errorMessage("invalid_id") );
-        }
-        else {
-            $one = UserData::where('id', $id)->first();
-            if( ! $one ) {
-                return $this->returnError( $this->errorMessage("not_found_one") );
-            }
-            else {
-                try {
-                    $one->delete();
-                    return $this->returnSuccess( $this->errorMessage("delete_success") );
-                }
-                catch( \RuntimeException $e ) {
-                    return $this->returnError( $e->getMessage() );
-                }
-            }
-        }
-    }
+//    public function destroy($id)
+//    {
+//        // Si l'id est invalide
+//        if( empty($id) || ! is_numeric($id) || $id < 0 ) {
+//            return $this->returnError( $this->errorMessage("invalid_id") );
+//        }
+//        else {
+//            $one = UserData::where('id', $id)->first();
+//            if( ! $one ) {
+//                return $this->returnError( $this->errorMessage("not_found_one") );
+//            }
+//            else {
+//                try {
+//                    $one->delete();
+//                    return $this->returnSuccess( $this->errorMessage("delete_success") );
+//                }
+//                catch( \RuntimeException $e ) {
+//                    return $this->returnError( $e->getMessage() );
+//                }
+//            }
+//        }
+//    }
 
     private function errorMessage( string $key , array $data = [] ) : string
     {
