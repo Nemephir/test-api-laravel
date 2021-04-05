@@ -25,38 +25,44 @@ class UserDataController extends Controller
      */
     public function store(Request $request)
     {
-        // Récupération des données post
-        $post     = $request->all();
-        // Préparation du tableau à insérer
-        $data     = [];
-        // Création d'une instange de UserData
-        $userData = new UserData();
-
-        // Pour chaque champ remplissable du modèle
-        foreach( $userData->getFillable() as $field ) {
-            // Si le champ n'est pas présent dans la requête ou que la valeur renseignée est nulle
-            if( ! array_key_exists( $field, $post) || empty($post[$field]) ) {
-                // Renvoie d'une erreur
-                return $this->returnError(
-                    $this->errorMessage( "empty_field", ['field'=>$field] ) ,
-                    $field
-                );
+        // Test de vérification des données entrantes
+        $test = $this->checkEntry( $request );
+        if( $test !== true ) {
+            return $test;
+        }
+        else {
+            // Tous les champs sont valides
+            try {
+                UserData::create( $request->all() );
+                return $this->returnSuccess( $this->errorMessage("create_success") );
             }
-            // Sinon, le champ est valide, on l'ajoute à la liste des données à faire entrer
-            else
-            {
-                $data[$field] = $post[$field];
+            catch( \RuntimeException $e ) {
+                return $this->returnError( $e->getMessage() );
             }
         }
+    }
 
-        // Tous les champs sont valides
-        try {
-            UserData::create( $request->all() );
-            return $this->returnSuccess( $this->errorMessage("create_success") );
-        }
-        catch( \RuntimeException $e ) {
-            return $this->returnError( $e->getMessage() );
-        }
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\UserData  $userData
+     * @return \Illuminate\Http\Response
+     */
+//    public function show(UserData $userData)
+//    {
+//        //
+//    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\UserData  $userData
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, UserData $userData)
+    {
+        //
     }
 
     /**
@@ -88,18 +94,26 @@ class UserDataController extends Controller
 //        }
 //    }
 
-    private function errorMessage( string $key , array $data = [] ) : string
+    private function checkEntry( Request $request )
     {
-        switch( $key ) {
-            case "create_success" : return "L'utilisateur a bien été ajouté";
-            case "invalid_id"     : return "L'id saisie est invalide";
-            case "not_found_one"  : return "L'utilisateur demandé n'a pas été trouvé";
-            case "delete_success" : return "L'utilisateur a bien été supprimé";
-            case "empty_field"    : return "Champ {$data['field']} invalide";
-            default               : return "";
-        }
-    }
+        $post     = $request->all(); // Récupération des données post
+        $data     = [];              // Préparation du tableau à insérer
+        $userData = new UserData();  // Création d'une instange de UserData
 
+        // Pour chaque champ remplissable du modèle
+        foreach( $userData->getFillable() as $field ) {
+            // Si le champ n'est pas présent dans la requête ou que la valeur renseignée est nulle
+            if( ! array_key_exists( $field, $post) || empty($post[$field]) ) {
+                // Renvoie d'une erreur
+                return $this->returnError(
+                    $this->errorMessage( "empty_field", ['field'=>$field] ) ,
+                    $field
+                );
+            }
+        }
+
+        return true;
+    }
 
     private function returnSuccess( string $msg )
     {
@@ -108,7 +122,6 @@ class UserDataController extends Controller
             'message' => $msg
         ], 200 );
     }
-
 
     private function returnError( string $msg , ?string $fieldName = NULL , ?int $httpCode = 500 )
     {
@@ -122,5 +135,17 @@ class UserDataController extends Controller
         }
 
         return response()->json( $data , $httpCode );
+    }
+
+    private function errorMessage( string $key , array $data = [] ) : string
+    {
+        switch( $key ) {
+            case "create_success" : return "L'utilisateur a bien été ajouté";
+            case "invalid_id"     : return "L'id saisie est invalide";
+            case "not_found_one"  : return "L'utilisateur demandé n'a pas été trouvé";
+            case "delete_success" : return "L'utilisateur a bien été supprimé";
+            case "empty_field"    : return "Champ {$data['field']} invalide";
+            default               : return "";
+        }
     }
 }
