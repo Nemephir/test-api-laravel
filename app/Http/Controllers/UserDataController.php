@@ -48,10 +48,16 @@ class UserDataController extends Controller
      * @param  \App\Models\UserData  $userData
      * @return \Illuminate\Http\Response
      */
-//    public function show(UserData $userData)
-//    {
-//        //
-//    }
+    public function show($id)
+    {
+        $one = UserData::where('id', $id)->first();
+        if( ! $one ) {
+            return $this->returnError( $this->errorMessage("not_found_one") );
+        }
+        else {
+            return $one->toJson();
+        }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -60,9 +66,29 @@ class UserDataController extends Controller
      * @param  \App\Models\UserData  $userData
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UserData $userData)
+    public function update(Request $request, $id)
     {
-        //
+        // Test de vérification des données entrantes
+        $test = $this->checkEntry( $request );
+        if( $test !== true ) {
+            return $test;
+        }
+        else
+        {
+            $one = UserData::where('id', $id)->first();
+            if( ! $one ) {
+                return $this->returnError( $this->errorMessage("not_found_one") );
+            }
+            else {
+                try {
+                    $one->update( $request->all() );
+                    return $this->returnSuccess( $this->errorMessage("update_success") );
+                }
+                catch( \RuntimeException $e ) {
+                    return $this->returnError( $e->getMessage() );
+                }
+            }
+        }
     }
 
     /**
@@ -141,9 +167,10 @@ class UserDataController extends Controller
     {
         switch( $key ) {
             case "create_success" : return "L'utilisateur a bien été ajouté";
+            case "update_success" : return "L'utilisateur a bien été modifié";
+            case "delete_success" : return "L'utilisateur a bien été supprimé";
             case "invalid_id"     : return "L'id saisie est invalide";
             case "not_found_one"  : return "L'utilisateur demandé n'a pas été trouvé";
-            case "delete_success" : return "L'utilisateur a bien été supprimé";
             case "empty_field"    : return "Champ {$data['field']} invalide";
             default               : return "";
         }
