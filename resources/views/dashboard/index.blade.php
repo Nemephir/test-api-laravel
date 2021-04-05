@@ -18,6 +18,9 @@
         <div class="row">
             <div class="col-12">
 
+                <a href="{{ @route('accounts.index')  }}" class="btn btn-secondary float-right mt-2">
+                    <i class="fas fa-user-lock"></i> Gestion des comptes
+                </a>
                 <h1>Tous les utilisateurs</h1>
 
                 <table class="table table-hover table-striped">
@@ -37,9 +40,10 @@
                                 <td>{{ $user['firstname'] }}</td>
                                 <td>{{ $user['lastname'] }}</td>
                                 <td>{{ $user['birthday'] }}</td>
-                                <td>
-                                    <a href="{{ @route('dashboard.user', ['id'=>$user['id']]) }}">
+                                <td class="text-right">
+                                    <a class="btn btn-primary btn-sm" href="{{ @route('dashboard.user', ['id'=>$user['id']]) }}">
                                         <i class="fas fa-pen"></i>
+                                        Editer
                                     </a>
                                 </td>
                             </tr>

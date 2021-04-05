@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get  (                '/'         , [ Dashboard::class, 'index' ] )->name('dashboard.index');
-Route::match(['get','post'], '/user/{id}', [ Dashboard::class, 'user'  ] )->name('dashboard.user');
+Route::get  (                '/'         , [ DashboardController::class, 'index' ] )->name('dashboard.index');
+Route::match(['get','post'], '/user/{id}', [ DashboardController::class, 'user'  ] )->name('dashboard.user');
+
+Route::match(['get','post'], '/accounts', [ AccountController::class, 'index'  ] )->name('accounts.index');
