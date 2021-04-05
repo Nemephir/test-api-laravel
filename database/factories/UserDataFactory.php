@@ -23,7 +23,7 @@ class UserDataFactory extends Factory
         return [
             'firstname' => $this->faker->firstname,
             'lastname'  => $this->faker->lastname,
-            'birthday'  => $this->faker->datetime,
+            'birthday'  => $this->faker->date,
         ];
     }
 }

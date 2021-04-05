@@ -18,7 +18,7 @@ class CreateUserDataTable extends Migration
             $table->timestamps();
             $table->string( 'firstname' , 255 );
             $table->string( 'lastname' , 255 );
-            $table->dateTime( 'birthday' );
+            $table->date( 'birthday' );
         });
     }
 
