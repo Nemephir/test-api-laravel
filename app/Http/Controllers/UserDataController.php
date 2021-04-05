@@ -8,9 +8,8 @@ use Illuminate\Http\Request;
 class UserDataController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * [API] Lister les utilisateurs
+     * @return mixed
      */
     public function index()
     {
@@ -18,10 +17,9 @@ class UserDataController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * [API] Créer un utilisateur
+     * @param Request $request
+     * @return bool|\Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -43,10 +41,9 @@ class UserDataController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\UserData  $userData
-     * @return \Illuminate\Http\Response
+     * [API] Afficher un utilisateur
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -60,11 +57,10 @@ class UserDataController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\UserData  $userData
-     * @return \Illuminate\Http\Response
+     * [API] Modifier un utilisateur
+     * @param Request $request
+     * @param         $id
+     * @return bool|\Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
@@ -120,6 +116,11 @@ class UserDataController extends Controller
 //        }
 //    }
 
+    /**
+     * Vérifie les données saisie pour la création et la modification d'un utilisateur
+     * @param Request $request
+     * @return bool|\Illuminate\Http\JsonResponse
+     */
     private function checkEntry( Request $request )
     {
         $post     = $request->all(); // Récupération des données post
@@ -141,6 +142,11 @@ class UserDataController extends Controller
         return true;
     }
 
+    /**
+     * Renvoie une notification de succès
+     * @param string $msg
+     * @return \Illuminate\Http\JsonResponse
+     */
     private function returnSuccess( string $msg )
     {
         return response()->json( [
@@ -149,6 +155,13 @@ class UserDataController extends Controller
         ], 200 );
     }
 
+    /**
+     * Renvoie une  notification d'erreur d'exécution personnalisée
+     * @param string      $msg
+     * @param string|null $fieldName
+     * @param int|null    $httpCode
+     * @return \Illuminate\Http\JsonResponse
+     */
     private function returnError( string $msg , ?string $fieldName = NULL , ?int $httpCode = 500 )
     {
         $data = [
@@ -163,6 +176,13 @@ class UserDataController extends Controller
         return response()->json( $data , $httpCode );
     }
 
+    /**
+     * Permet de récupérer un message de notification à partir d'une clé
+     * Permet également de centraliser tous les messages au même endroit.
+     * @param string $key
+     * @param array  $data
+     * @return string
+     */
     private function errorMessage( string $key , array $data = [] ) : string
     {
         switch( $key ) {
